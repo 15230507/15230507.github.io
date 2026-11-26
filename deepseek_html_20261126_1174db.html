@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小鹏汇天飞行汽车技术深度调研与分析</title>
+    <style>
+        :root {
+            --bg: #f5f7fa;
+            --card: #ffffff;
+            --text: #1a1a2e;
+            --muted: #5a6270;
+            --accent: #0b5cff;
+            --accent-soft: #e8f0ff;
+            --border: #e2e6ec;
+            --tag-bg: #f0f3f8;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.75;
+            -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+        /* Header */
+        header { margin-bottom: 36px; }
+        .kicker {
+            display: inline-block;
+            font-size: 12px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--accent);
+            background: var(--accent-soft);
+            padding: 4px 12px;
+            border-radius: 999px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        h1 {
+            font-size: clamp(24px, 3.5vw, 34px);
+            line-height: 1.3;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.01em;
+        }
+        .subtitle { color: var(--muted); font-size: 15px; max-width: 640px; }
+
+        /* Meta bar */
+        .meta-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 24px;
+            font-size: 13px;
+            color: var(--muted);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 0;
+            margin: 28px 0 32px;
+        }
+        .meta-bar strong { color: var(--text); font-weight: 600; }
+
+        /* Sections */
+        section { margin-bottom: 44px; }
+        h2 {
+            font-size: 21px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            padding-left: 14px;
+            border-left: 4px solid var(--accent);
+            line-height: 1.4;
+        }
+        h3 { font-size: 16px; font-weight: 700; margin: 22px 0 10px; }
+        p { margin-bottom: 12px; color: #2c3340; font-size: 15px; }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 22px 24px;
+            margin-bottom: 18px;
+        }
+        .card h3 { margin-top: 0; }
+
+        /* Product grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        @media (max-width: 680px) { .product-grid { grid-template-columns: 1fr; } }
+        .product-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 22px;
+        }
+        .product-card .tag {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 999px;
+            background: var(--tag-bg);
+            color: var(--muted);
+            margin-bottom: 10px;
+            letter-spacing: 0.04em;
+        }
+        .product-card h3 { margin: 0 0 8px; font-size: 17px; }
+        .product-card .spec {
+            font-size: 13px;
+            color: var(--muted);
+            border-top: 1px dashed var(--border);
+            margin-top: 14px;
+            padding-top: 12px;
+        }
+        .product-card .spec li {
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 3px 0;
+        }
+        .product-card .spec span:last-child { font-weight: 600; color: var(--text); }
+
+        /* Table */
+        .table-wrap { overflow-x: auto; margin: 16px 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            background: var(--card);
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        th, td { padding: 11px 14px; text-align: left; border-bottom: 1px solid var(--border); vertical-align: top; }
+        th { background: #f0f3f8; font-weight: 600; font-size: 12.5px; color: var(--muted); letter-spacing: 0.02em; }
+        tr:last-child td { border-bottom: none; }
+
+        /* Callout */
+        .callout {
+            background: #fff8e6;
+            border-left: 4px solid #e6a700;
+            padding: 16px 20px;
+            border-radius: 0 10px 10px 0;
+            font-size: 14px;
+            color: #4a3a00;
+            margin: 18px 0;
+        }
+        .callout strong { color: #2e2200; }
+
+        .callout.blue {
+            background: var(--accent-soft);
+            border-left-color: var(--accent);
+            color: #0a2a66;
+        }
+        .callout.blue strong { color: #001a4d; }
+
+        /* Bar chart (simple CSS) */
+        .bar-item { margin-bottom: 14px; }
+        .bar-label { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 5px; }
+        .bar-label span:last-child { font-weight: 600; }
+        .bar-track { height: 10px; background: #edf0f5; border-radius: 999px; overflow: hidden; }
+        .bar-fill { height: 100%; border-radius: 999px; background: var(--accent); }
+        .bar-fill.muted { background: #b8c4d6; }
+
+        /* Footer */
+        footer {
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 12.5px;
+            color: var(--muted);
+        }
+        footer p { font-size: 12.5px; color: var(--muted); margin-bottom: 6px; }
+
+        .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 16px; }
+        .badge {
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 999px;
+            background: var(--tag-bg);
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+        .badge.green { background: #e6f7ee; color: #0a6b3d; border-color: #b8e6ce; }
+        .badge.amber { background: #fff4e0; color: #8a5a00; border-color: #f0d9a8; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <header>
+        <div class="kicker">课程作业 · 飞行汽车技术基础</div>
+        <h1>小鹏汇天飞行汽车技术深度调研与分析</h1>
+        <p class="subtitle">围绕“陆地航母”分体式飞行汽车与 A868 全倾转增程飞行器，从技术可行性、应用场景与市场可行性三个维度展开分析。</p>
+    </header>
+
+    <div class="meta-bar">
+        <div><strong>研究对象：</strong>小鹏汇天（XPeng AeroHT）</div>
+        <div><strong>产品线：</strong>陆地航母 / A868</div>
+        <div><strong>报告类型：</strong>技术调研与可行性分析</div>
+    </div>
+
+    <!-- 一、企业概况 -->
+    <section>
+        <h2>一、企业概况与研究范围</h2>
+        <p>小鹏汇天（XPeng AeroHT）是小鹏汽车生态体系内的载人飞行器企业，专注于飞行汽车的研发、量产与商业化。截至 2026 年，小鹏汇天累计股权融资超过 <strong>10 亿美元</strong>，在 eVTOL 赛道中融资规模居前，估值约 <strong>224 亿元人民币</strong>[reference:0]。公司在广州建有飞行汽车量产工厂，规划年产能 <strong>1 万台</strong>，是全球首个万辆级飞行汽车产能布局[reference:1]。</p>
+        <p>小鹏汇天的产品策略区别于亿航智能的“无人驾驶多座载人”路线和峰飞航空的“货运先行”路线，采取<strong>“个人消费 + 跨城通勤”双线并行</strong>的布局：一条线是面向个人用户的<strong>分体式飞行汽车“陆地航母”</strong>，另一条线是面向商务与家庭中长途出行的<strong>全倾转增程飞行器 A868</strong>[reference:2]。本报告聚焦这两条产品线的核心技术特征与可行性。</p>
+    </section>
+
+    <!-- 二、产品与技术 -->
+    <section>
+        <h2>二、产品矩阵与技术路线</h2>
+
+        <div class="product-grid">
+            <!-- 陆地航母 -->
+            <div class="product-card">
+                <div class="tag">分体式 · 个人消费</div>
+                <h3>陆地航母（X3-F）</h3>
+                <p style="font-size:14px; color:var(--muted);">“陆行体 + 飞行体”分体设计，陆行体为 6×6 全轮驱动增程式越野车，飞行体为双座电动垂直起降飞行器，二者可自动分离与结合。</p>
+                <ul class="spec">
+                    <li><span>陆行体续航</span><span>CLTC &gt; 1000 km</span></li>
+                    <li><span>飞行体航程</span><span>约 20–30 km（短途）</span></li>
+                    <li><span>飞行体构型</span><span>六旋翼双涵道</span></li>
+                    <li><span>座舱</span><span>飞行体 2 座</span></li>
+                    <li><span>驾驶资质</span><span>地面 C 照 / 飞行需飞行执照</span></li>
+                    <li><span>预售价格</span><span>≤ 200 万元</span></li>
+                </ul>
+            </div>
+            <!-- A868 -->
+            <div class="product-card">
+                <div class="tag">全倾转 · 跨城通勤</div>
+                <h3>A868</h3>
+                <p style="font-size:14px; color:var(--muted);">全尺寸全倾转构型，搭载鲲鹏超级增程混电架构，旋翼可整体倾转 90°，从垂直起降无缝切换至高速平飞，消除巡航“死重”。</p>
+                <ul class="spec">
+                    <li><span>动力形式</span><span>增程式混电</span></li>
+                    <li><span>最高航速</span><span>≥ 360 km/h</span></li>
+                    <li><span>设计航程</span><span>≥ 500 km</span></li>
+                    <li><span>座舱布局</span><span>6 座商务座舱</span></li>
+                    <li><span>目标场景</span><span>跨城市群通勤</span></li>
+                    <li><span>试飞节点</span><span>2026.11 完成倾转过渡试飞</span></li>
+                </ul>
+            </div>
+        </div>
+
+        <h3>技术路线解读：为什么是“分体 + 全倾转”两条腿走路？</h3>
+        <p>“陆地航母”的分体式路线，本质上是<strong>工程务实主义的取舍</strong>。在现阶段电池能量密度和航空安全标准的双重约束下，让同一台机器同时满足“地面行驶”和“空中飞行”的安全、重量与续航要求，难度极大。分体之后，飞行体按航空器标准取证，陆行体按汽车标准落地，两条认证路径各自成熟，反而能更快推进[reference:3]。其飞行体采用<strong>六轴六桨双涵道构型</strong>，具备动力冗余能力，即使双旋翼失效仍可安全飞行和着陆[reference:4]。</p>
+        <p>A868 选择的全倾转构型，则是<strong>性能上限更高、技术门槛也更高</strong>的路线。与“半倾转”在巡航时部分旋翼停转形成死重不同，全倾转让全部旋翼在平飞阶段转为推进器，气动效率显著提升。A868 的核心突破在于用<strong>增程式混电架构</strong>绕开了纯电 eVTOL 的航程天花板：以超过 500 公里的设计航程，直接切入跨城市群商务通勤场景，而当前多数纯电 eVTOL 的航程定位仍在 200 公里左右。</p>
+
+        <div class="callout blue">
+            <strong>关键判断：</strong>小鹏汇天的双线布局并非技术路线的“摇摆”，而是覆盖了两个相互独立的市场窗口——分体式抢的是个人消费与低空文旅的早期窗口，全倾转瞄准的是跨城通勤的中长期高价值场景。两条线在适航取证和供应链上可以形成一定的资源共享，但商业化节奏截然不同。
+        </div>
+    </section>
+
+    <!-- 三、技术可行性 -->
+    <section>
+        <h2>三、技术可行性分析</h2>
+
+        <h3>3.1 试飞与验证进展</h3>
+        <p>A868 于 <strong>2026 年 11 月 22 日</strong>完成倾转过渡试飞，成为<strong>中国首款完成全尺寸全倾转构型倾转过渡验证的飞行汽车</strong>。倾转过渡要求旋翼在半空平滑旋转 90°，将垂直升力无缝切换为水平推力，气流耦合极为复杂，是真正确认全倾转构型工程可行性的关键节点。在此之前，全球仅美国 Joby Aviation 的 S4 完成过同等级别的全尺寸倾转过渡试飞。</p>
+        <p>“陆地航母”方面，2026 年广州工厂已完成多台飞行器的批量试产下线及多机试飞，首架用于阿联酋低空监管示范区的 X3-F 试验用机也已下线，并在阿联酋民航局监管下开展沙盒试运行[reference:9][reference:10]。这意味着其量产工艺和海外运行验证已经同步启动。</p>
+
+        <h3>3.2 安全冗余设计</h3>
+        <p>载人飞行器的技术可行性，安全冗余是底线。小鹏汇天在这两条产品线上均强调了多层级冗余：</p>
+        <ul style="margin: 8px 0 14px 22px; font-size: 14.5px; color: #2c3340;">
+            <li><strong>动力冗余：</strong>“陆地航母”飞行体的六轴六桨双涵道构型支持双电机/双旋翼失效下的安全着陆[reference:11]。</li>
+            <li><strong>能源冗余：</strong>A868 的增程式混电架构本身提供了“燃油发电 + 电池”的双重能源路径，降低了对单一电池系统的绝对依赖。</li>
+            <li><strong>飞控与操控冗余：</strong>官方披露的方案涵盖飞控导航、飞行操控、总线通信等关键系统的冗余设计，舱内采用单屏单杆的简化操控逻辑，并设置副驾操作台作为安全备份[reference:12][reference:13]。</li>
+        </ul>
+
+        <h3>3.3 适航取证：技术可行性的“最后一公里”</h3>
+        <p>试飞成功是工程里程碑，<strong>不等于取得适航认证</strong>。A868 和“陆地航母”的飞行体仍需完成数千小时的极端环境测试，并取得型号合格证（TC）等民航认证，才能投入商业载客。</p>
+        <p>截至 2026 年 11 月，“陆地航母”飞行体 X3-F 的 <strong>TC 申请已于 2024 年 3 月获民航局受理，PC（生产许可证）申请于 2025 年 5 月获受理</strong>，TC 审查已进入符合性确认阶段[reference:15]。小鹏汽车董事长何小鹏在 2026 年科技日上表示，全球首张有人驾驶 eVTOL TC 认证“进入最后阶段”。但需要审慎看待的是：TC 证书的实际颁发时间仍受审查进度影响，且“进入最后阶段”与“已经取证”之间存在本质区别。</p>
+
+        <div class="badge-row">
+            <span class="badge green">倾转过渡试飞 ✓ 2026.11</span>
+            <span class="badge green">海外沙盒交付 ✓ 2026.10</span>
+            <span class="badge amber">TC 取证 进行中</span>
+            <span class="badge amber">PC 受理 2025.05</span>
+        </div>
+    </section>
+
+    <!-- 四、应用场景 -->
+    <section>
+        <h2>四、应用场景分析</h2>
+
+        <h3>4.1 “陆地航母”：低空文旅与个人体验先行</h3>
+        <p>“陆地航母”的飞行体航程较短（约 20–30 公里量级），决定了它在短期内<strong>不适合承担高频次、长距离的通勤任务</strong>。其更现实的落地场景是<strong>低空文旅、景区观光、飞行体验和个人娱乐</strong>。飞行体可收纳于陆行体后备箱，随车运输到允许飞行的区域后再分离起飞，这种“车找场地”的模式规避了城市空域和起降点密度不足的早期瓶颈。截至 2026 年，其全球累计订单已突破 <strong>7000 台</strong>，其中相当比例来自文旅和体验类需求[reference:17][reference:18]。</p>
+
+        <h3>4.2 A868：跨城市群商务通勤</h3>
+        <p>A868 的场景定位清晰指向<strong>大湾区、长三角、京津冀等城市群内部的点对点商务通勤</strong>。以 500 公里以上航程和 360 km/h 级巡航速度，它可以在地面交通耗时数小时的城际距离上提供显著的时间压缩。官方明确将其对标 Joby Aviation S4 的“城市空中出租车”定位，但用增程架构和 6 座布局做出了差异化：<strong>用航程换场景宽度，用座位数换单次运营效率</strong>。</p>
+
+        <h3>4.3 行业层面的场景共识</h3>
+        <p>从更广的行业视角看，当前飞行汽车的应用落地遵循“<strong>先专业化、后大众化</strong>”的节奏。高价值、高时效性的场景——应急救援、特种消防救援、点对点高端接驳——被普遍认为会率先跑通[reference:20][reference:21]。大众化场景则大概率从“文旅先行”起步，再逐步向日常通勤渗透。小鹏汇天的双线布局恰好对应了这一节奏：陆地航母切入文旅与个人消费，A868 瞄准通勤与商务接驳。</p>
+    </section>
+
+    <!-- 五、市场可行性 -->
+    <section>
+        <h2>五、市场可行性分析</h2>
+
+        <h3>5.1 市场空间：万亿级赛道的共识与分歧</h3>
+        <p>飞行汽车所处的低空经济赛道，在规模预测上存在口径差异，但方向高度一致。摩根士丹利预测 2030 年全球飞行汽车市场规模将达到 <strong>3000 亿美元</strong>；国内方面，低空经济市场规模 2026 年预计突破 <strong>1 万亿元</strong>，远期有望牵引万亿级至十万亿级产业集群[reference:22][reference:23]。分歧不在“是否增长”，而在<strong>从意向订单到真实收入的转化速度</strong>。</p>
+
+        <div class="card">
+            <h3 style="margin-top:0;">2026 年国内 eVTOL 头部企业累计融资对比（约数）</h3>
+            <div class="bar-item">
+                <div class="bar-label"><span>小鹏汇天</span><span>约 65 亿元</span></div>
+                <div class="bar-track"><div class="bar-fill" style="width:100%;"></div></div>
+            </div>
+            <div class="bar-item">
+                <div class="bar-label"><span>沃兰特</span><span>约 48.6 亿元</span></div>
+                <div class="bar-track"><div class="bar-fill" style="width:75%;"></div></div>
+            </div>
+            <div class="bar-item">
+                <div class="bar-label"><span>峰飞航空</span><span>约 27.95 亿元</span></div>
+                <div class="bar-track"><div class="bar-fill" style="width:43%;"></div></div>
+            </div>
+            <div class="bar-item">
+                <div class="bar-label"><span>沃飞长空</span><span>约 21.8 亿元</span></div>
+                <div class="bar-track"><div class="bar-fill muted" style="width:34%;"></div></div>
+            </div>
+            <p style="font-size:12px; color:var(--muted); margin:10px 0 0;">数据来源：行业公开统计[reference:24]。注：融资规模不等于商业化进度。</p>
+        </div>
+
+        <h3>5.2 商业化节奏与订单质量</h3>
+        <p>小鹏汇天“陆地航母”的公开定价为<strong>不超过 200 万元</strong>，购车权益中包含小型直升机驾驶员执照的培训名额（培训与考试支持，并非直接授予资质）[reference:25]。交付节奏方面，官方口径经历过调整：早期曾释放 2026 年量产交付的信号，后续更审慎的表述指向 <strong>2027 年年中至下半年启动小规模批量交付</strong>。这一变化本身反映了适航取证与量产爬坡的现实约束[reference:26][reference:27]。</p>
+        <p>更值得关注的是<strong>订单质量</strong>。行业整体意向订单的长期转化率被认为不足 10%，“意向多、确认少、交付刚起步”是 2026 年 eVTOL 赛道的共同基本面[reference:28][reference:29]。7000 台意向订单是市场热度的信号，但真实收入取决于 TC 取证时间、正式大定比例以及各地低空运营审批的落地速度。</p>
+
+        <h3>5.3 竞争格局中的位置</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>企业</th>
+                        <th>技术/商业路线</th>
+                        <th>关键状态（2026）</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>亿航智能</strong></td>
+                        <td>无人驾驶多座载人</td>
+                        <td>唯一集齐 TC/PC/AC/OC 四证，但交付量小，2026 Q1 仅交付 4 架，收入指引撤回[reference:30]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>峰飞航空</strong></td>
+                        <td>货运先行，吨级无人驾驶</td>
+                        <td>V2000CG 三证齐全，货运场景已跑通，获境外型号认可[reference:31]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>沃飞长空</strong></td>
+                        <td>倾转旋翼，城际通勤</td>
+                        <td>AE200 推进 TC，订单与融资节奏较快，拟冲刺科创板[reference:32]</td>
+                    </tr>
+                    <tr>
+                        <td><strong>小鹏汇天</strong></td>
+                        <td>分体式个人消费 + 全倾转增程通勤</td>
+                        <td>融资额居前，订单超 7000 台，A868 完成倾转过渡试飞，TC 取证进行中</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p>小鹏汇天的差异化优势在于<strong>产品定义能力与供应链复用</strong>：eVTOL 与智能汽车的产业链重合度约 70%，小鹏在汽车制造、供应链管理和成本控制上的积累可以部分迁移[reference:33]。但其短板同样明确——<strong>在适航取证进度上并不领先于亿航和峰飞</strong>，而载人运营的收入节奏最终取决于取证与运营审批，而非制造能力[reference:34]。</p>
+    </section>
+
+    <!-- 六、结论与风险 -->
+    <section>
+        <h2>六、结论与关键风险</h2>
+
+        <h3>结论</h3>
+        <p>小鹏汇天通过“陆地航母 + A868”的双线布局，在飞行汽车的技术可行性和场景覆盖上做出了有区分度的探索。分体式路线用工程务实主义换取了更快的产品落地节奏，全倾转增程路线则在航程和速度上突破了纯电 eVTOL 的短期天花板。A868 完成全尺寸倾转过渡试飞，是技术可行性的重要正向信号；7000 台级意向订单和万辆级工厂的产能布局，则为市场可行性提供了需求侧和供给侧的初步支撑。</p>
+        <p>但飞行汽车的商业化从来不是“飞起来”那么简单。<strong>适航取证的时间表、意向订单的转化率、低空空域运营审批的落地速度</strong>，是横亘在所有 eVTOL 企业面前的三个结构性变量。小鹏汇天的技术路线选择降低了部分工程风险，但并未消除取证与运营层面的系统性不确定性。</p>
+
+        <h3>关键风险提示</h3>
+        <div class="callout">
+            <strong>① 适航进度风险：</strong>A868 与“陆地航母”飞行体的 TC 尚未正式颁发，取证时间若后移，将直接推迟规模化交付与收入确认。<br><br>
+            <strong>② 订单转化风险：</strong>行业意向订单整体转化率偏低，7000 台订单中最终转为正式大定并完成交付的比例存在不确定性。<br><br>
+            <strong>③ 运营生态风险：</strong>飞行汽车的常态化运营依赖起降点（飞行港）、低空航线审批、维修保障和飞行培训体系的同步成熟，这些基础设施的落地节奏不完全由整机企业掌控。
+        </div>
+    </section>
+
+    <footer>
+        <p><strong>参考资料（部分）：</strong>香港01《小鹏汇天A868飞行车试飞成功》（2026-11-23）；盖世汽车《酋长上门“提货”，小鹏这架飞行汽车凭什么？》（2026-10-29）；PChome《小鹏汇天陆地航母采用六旋翼双涵道设计》（2026-04-27）；中关村在线《小鹏汇天飞行汽车2027年下半年小批量交付》（2026-11-06）；央视财经《飞行汽车来了！有望拉动10万亿级市场》（2026-06-08）；虎嗅/IT桔子《2026年eVTOL赛道融资88亿元》（2026-10-21）；中商情报网、香港经济日报等公开报道。</p>
+        <p style="margin-top:8px;">本报告为课程作业用途整理，数据截至 2026 年 11 月公开信息，不构成投资或决策建议。</p>
+    </footer>
+
+</div>
+</body>
+</html>
